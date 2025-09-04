@@ -9,7 +9,41 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Link from "next/link";
+
+// Helper component for menu items
+const MenuItem = ({
+  href,
+  children,
+  truncate = false,
+}: {
+  href: string;
+  children: string;
+  truncate?: boolean;
+}) => (
+  <li>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link
+          href={href}
+          className={`text-sm text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md px-2 py-1 block transition-all duration-200 ${
+            truncate ? "truncate max-w-[180px]" : ""
+          }`}
+        >
+          {children}
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{children}</p>
+      </TooltipContent>
+    </Tooltip>
+  </li>
+);
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,8 +54,8 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full h-30   border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-30  items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full h-20 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <div className="h-8 w-8 rounded-full bg-green-600 flex items-center justify-center">
@@ -44,7 +78,7 @@ export function Header() {
                   : ""
               }`}
             >
-              <span>Products & Pricing</span>
+              <span>Services & Pricing</span>
               {activeDropdown === "products" ? (
                 <ChevronUp className="h-4 w-4" />
               ) : (
@@ -53,184 +87,199 @@ export function Header() {
             </button>
 
             {activeDropdown === "products" && (
-              <div className="absolute top-full left-0 mt-2 w-[800px] bg-white border rounded-lg shadow-lg p-6 grid grid-cols-4 gap-6">
-                {/* Column 1: MAKE IT OFFICIAL */}
+              <div className="absolute top-full left-0 mt-2 w-[800px] max-h-[80vh] bg-white border rounded-lg shadow-lg p-6 grid grid-cols-4 gap-6 overflow-y-auto">
+                {/* Column 1: FORMATION SERVICES */}
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    MAKE IT OFFICIAL
+                  <h3 className="font-semibold text-gray-700 mb-13 text-sm uppercase tracking-wide">
+                    FORMATION SERVICES
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/services/llc-formation"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Form an LLC
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/corporation-formation"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        File an S Corp
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/corporation-formation"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Start a C Corp
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/pricing"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Compare Formation Plans
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/pricing"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Products & Pricing
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/services/llc-formation">
+                      LLC Formation
+                    </MenuItem>
+                    <MenuItem href="/services/corporation-formation">
+                      Corp. Formation
+                    </MenuItem>
+                    <MenuItem href="/services/corporation-formation">
+                      Compare Formation Plans
+                    </MenuItem>
+                    <MenuItem href="/pricing">
+                      DBA/Trademark Registration
+                    </MenuItem>
                   </ul>
                 </div>
 
-                {/* Column 2: STAY COMPLIANT */}
+                {/* Column 2: COMPLIANCE SERVICES */}
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    STAY COMPLIANT
+                  <h3 className="font-semibold text-gray-700 mb-8 text-sm uppercase tracking-wide">
+                    COMPLIANCE SERVICES
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/services/registered-agent"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Registered Agent Service
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/compliance"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Worry-Free Compliance
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/boi-filing"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        BOI Filing
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/ein"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Employer ID Number (EIN)
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/business-license"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business License Report
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/templates"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business Document Templates
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/services/registered-agent">
+                      EIN Services
+                    </MenuItem>
+                    <MenuItem href="/services/compliance">
+                      BOI Filing Services
+                    </MenuItem>
+                    <MenuItem href="/services/boi-filing">
+                      ITIN Services
+                    </MenuItem>
+                    <MenuItem href="/services/ein">
+                      Sales & Use Tax Registration
+                    </MenuItem>
+                    <MenuItem href="/services/business-license">
+                      Annual Company State Filing
+                    </MenuItem>
+                    <MenuItem href="/services/templates">
+                      EIN Closing Services
+                    </MenuItem>
+                    <MenuItem href="/services/templates">
+                      Registered Agent Services
+                    </MenuItem>
+                    <MenuItem href="/services/templates">
+                      Company Dissolution(State Fee Vary)
+                    </MenuItem>
+                    <MenuItem href="/services/templates">
+                      Company Revival (State Fee vary)
+                    </MenuItem>
+                    <MenuItem href="/services/templates">
+                      Address Change Services
+                    </MenuItem>
+                    <MenuItem href="/services/templates" truncate>
+                      Filing Articles Of Amendments(State fee excluded)
+                    </MenuItem>
+                    <MenuItem href="/services/templates">
+                      Payroll Related Services
+                    </MenuItem>
+                    <MenuItem href="/services/templates" truncate>
+                      Payroll Withholding Account Registration (Some states may
+                      have a small fee that is excluded)
+                    </MenuItem>
+                    <MenuItem href="/services/templates">
+                      UI(Unemployment Insurance)
+                    </MenuItem>
+                    <MenuItem href="/services/templates" truncate>
+                      Payroll Management (Gusto, Adp, QBO, Paychecks, Paycom,
+                      Rippling) monthly
+                    </MenuItem>
+                    <MenuItem href="/services/templates" truncate>
+                      Payroll Account Setup (Reach out for pricing)
+                    </MenuItem>
                   </ul>
                 </div>
 
-                {/* Column 3: MANAGE FINANCES */}
+                {/* Column 3: ACCOUNTING & BOOKKEEPING TAXES */}
                 <div>
-                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    MANAGE FINANCES
+                  <h3 className="font-semibold text-gray-700 mb-8 text-sm uppercase tracking-wide">
+                    Accounting & Bookkeeping Taxes
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/services/bookkeeping"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Money Pro Bookkeeping
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/business-banking"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business Bank Account
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/tax-filing"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Tax Filing & Advice
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/services/bookkeeping" truncate>
+                      Pro-BookKeeping Services (Small Business)
+                    </MenuItem>
+                    <MenuItem href="/services/business-banking" truncate>
+                      Pro-BookKeeping Services (Medium Business)
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing" truncate>
+                      Pro-Bookkeeping Services (Large Business)
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing">
+                      Full-Year Reconciliation Services
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing" truncate>
+                      Setting Up New Books In QBO/Xero Or Any ERP (charges
+                      varies based on nature of work)
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing" truncate>
+                      Financial Reporting - Reach Out For Pricing
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing" truncate>
+                      Virtual CFO Services-Reach Out For Pricing
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing">
+                      Payroll Taxes
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing">
+                      Payroll Withholding Tax Filing
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing">
+                      W2 & 1099 Filing
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing">
+                      Tax Filing Services
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing" truncate>
+                      Tax Filing Individual ( Non Resident) With ITIN
+                    </MenuItem>
+                    <MenuItem href="/services/tax-filing" truncate>
+                      Company Tax Filing Vary Based On The Volume Of Business
+                    </MenuItem>
                   </ul>
                 </div>
 
-                {/* Column 4: GET CUSTOMERS */}
+                {/* Column 4: UK FORMATION & COMPLIANCE SERVICES */}
                 <div>
                   <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    GET CUSTOMERS
+                    UK FORMATION & COMPLIANCE SERVICES
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/services/website-builder"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business Website Builder
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/domain-registration"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Domain Name Registration
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/business-email"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business Email Address
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/services/logo-kit"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Logo Kit
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/services/website-builder">
+                      UK LTD Formation
+                    </MenuItem>
+                    <MenuItem href="/services/domain-registration" truncate>
+                      Simple Corporation Tax Return Filing (CT600)
+                    </MenuItem>
+                    <MenuItem href="/services/business-email" truncate>
+                      Advance Corporation Tax Return Filing (CT600)
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Registering Client For Selfassessment
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit" truncate>
+                      Simple Self Assessment (SA100) Filing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit" truncate>
+                      Advance Self Assessment (SA100) Filing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit" truncate>
+                      Simple Annual Corporation Accounts Preparation
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit" truncate>
+                      Complex Annual Corporation Tax Accounts Prepartion
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Dormant Accounts Filing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Micro-Entity Accounts Filiing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Abridged Accounts Filing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Full Statutory Accounts Filing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Confirmation Statement Filing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      VAT Registeration
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      VAT Return Filing
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Tax Planning & Consulation On Zoom
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit" truncate>
+                      Tax Budgeting & Taxation In Investment Appraisal
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Company Registration
+                    </MenuItem>
+                    <MenuItem href="/services/logo-kit">
+                      Initial Compliance After Formation
+                    </MenuItem>
                   </ul>
                 </div>
               </div>
@@ -256,61 +305,31 @@ export function Header() {
             </button>
 
             {activeDropdown === "guides" && (
-              <div className="absolute top-full left-0 mt-2 w-[800px] bg-white border rounded-lg shadow-lg p-6 grid grid-cols-4 gap-6">
+              <div className="absolute top-full left-0 mt-2 w-[800px] max-h-[80vh] bg-white border rounded-lg shadow-lg p-6 grid grid-cols-4 gap-6 overflow-y-auto">
                 {/* Column 1: PLAN YOUR BUSINESS */}
                 <div>
                   <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
                     PLAN YOUR BUSINESS
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/guides/llc-formation"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        How to Start an LLC
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/incorporation"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        How to Incorporate
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/s-corp"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        How to File an S Corp
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/start-business"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        How to Start a Business
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/compare-entities"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Compare Business Entities
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/business-ideas"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business Ideas
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/guides/llc-formation">
+                      How to Start an LLC
+                    </MenuItem>
+                    <MenuItem href="/guides/incorporation">
+                      How to Incorporate
+                    </MenuItem>
+                    <MenuItem href="/guides/s-corp">
+                      How to File an S Corp
+                    </MenuItem>
+                    <MenuItem href="/guides/start-business">
+                      How to Start a Business
+                    </MenuItem>
+                    <MenuItem href="/guides/compare-entities">
+                      Compare Business Entities
+                    </MenuItem>
+                    <MenuItem href="/guides/business-ideas">
+                      Business Ideas
+                    </MenuItem>
                   </ul>
                 </div>
 
@@ -319,55 +338,25 @@ export function Header() {
                   <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
                     GROW YOUR BUSINESS
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/guides/marketing-tips"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Marketing Tips
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/after-llc"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Steps After Forming an LLC
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/business-cards"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business Card Design
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/small-business-grants"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Small Business Grants
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/small-business-loans"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Small Business Loans
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/funding-llc"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Funding Your LLC
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/guides/marketing-tips">
+                      Marketing Tips
+                    </MenuItem>
+                    <MenuItem href="/guides/after-llc">
+                      Steps After Forming an LLC
+                    </MenuItem>
+                    <MenuItem href="/guides/business-cards">
+                      Business Card Design
+                    </MenuItem>
+                    <MenuItem href="/guides/small-business-grants">
+                      Small Business Grants
+                    </MenuItem>
+                    <MenuItem href="/guides/small-business-loans">
+                      Small Business Loans
+                    </MenuItem>
+                    <MenuItem href="/guides/funding-llc">
+                      Funding Your LLC
+                    </MenuItem>
                   </ul>
                 </div>
 
@@ -376,47 +365,18 @@ export function Header() {
                   <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
                     RUN YOUR BUSINESS
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/guides/hiring"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Guide to Hiring
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/insurance"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Guide to SMB Insurance
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/webinars"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Webinars
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/llc-tax-writeoffs"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        LLC Tax Write-Offs
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/guides/llc-tax-classification"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        LLC Tax Classification
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/guides/hiring">Guide to Hiring</MenuItem>
+                    <MenuItem href="/guides/insurance">
+                      Guide to SMB Insurance
+                    </MenuItem>
+                    <MenuItem href="/guides/webinars">Webinars</MenuItem>
+                    <MenuItem href="/guides/llc-tax-writeoffs">
+                      LLC Tax Write-Offs
+                    </MenuItem>
+                    <MenuItem href="/guides/llc-tax-classification">
+                      LLC Tax Classification
+                    </MenuItem>
                   </ul>
                 </div>
 
@@ -425,39 +385,19 @@ export function Header() {
                   <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
                     FREE BUSINESS TOOLS
                   </h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link
-                        href="/tools/s-corp-calculator"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        S Corp Savings Calculator
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/tools/entity-quiz"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Entity Type Quiz
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/tools/break-even-calculator"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Break Even Calculator
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/tools/business-name-generator"
-                        className="text-sm text-gray-600 hover:text-green-600"
-                      >
-                        Business Name Generator
-                      </Link>
-                    </li>
+                  <ul className="space-y-1">
+                    <MenuItem href="/tools/s-corp-calculator">
+                      S Corp Savings Calculator
+                    </MenuItem>
+                    <MenuItem href="/tools/entity-quiz">
+                      Entity Type Quiz
+                    </MenuItem>
+                    <MenuItem href="/tools/break-even-calculator">
+                      Break Even Calculator
+                    </MenuItem>
+                    <MenuItem href="/tools/business-name-generator">
+                      Business Name Generator
+                    </MenuItem>
                   </ul>
                 </div>
               </div>
@@ -484,39 +424,11 @@ export function Header() {
 
             {activeDropdown === "about" && (
               <div className="absolute top-full left-0 mt-2 w-64 bg-white border rounded-lg shadow-lg p-4">
-                <ul className="space-y-2">
-                  <li>
-                    <Link
-                      href="/about"
-                      className="text-sm text-gray-600 hover:text-green-600"
-                    >
-                      Our Story
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/about/team"
-                      className="text-sm text-gray-600 hover:text-green-600"
-                    >
-                      Our Team
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/about/mission"
-                      className="text-sm text-gray-600 hover:text-green-600"
-                    >
-                      Mission & Values
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/contact"
-                      className="text-sm text-gray-600 hover:text-green-600"
-                    >
-                      Contact Us
-                    </Link>
-                  </li>
+                <ul className="space-y-1">
+                  <MenuItem href="/about">Our Story</MenuItem>
+                  <MenuItem href="/about/team">Our Team</MenuItem>
+                  <MenuItem href="/about/mission">Mission & Values</MenuItem>
+                  <MenuItem href="/contact">Contact Us</MenuItem>
                 </ul>
               </div>
             )}
