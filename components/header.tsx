@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // Helper component for menu items
 const MenuItem = ({
@@ -48,6 +49,7 @@ const MenuItem = ({
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleDropdownToggle = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
@@ -94,7 +96,7 @@ export function Header() {
                     FORMATION SERVICES
                   </h3>
                   <ul className="space-y-1">
-                    <MenuItem href="/services/llc-formation">
+                    <MenuItem href="/services/llc-formation-2">
                       LLC Formation
                     </MenuItem>
                     <MenuItem href="/services/corporation-formation">
@@ -133,7 +135,7 @@ export function Header() {
                     <MenuItem href="/services/templates">
                       EIN Closing Services
                     </MenuItem>
-                    <MenuItem href="/services/templates">
+                    <MenuItem href="/services/registered-agent">
                       Registered Agent Services
                     </MenuItem>
                     <MenuItem href="/services/templates">
@@ -289,22 +291,17 @@ export function Header() {
           {/* Guides & Resources Dropdown */}
           <div className="relative">
             <button
-              onClick={() => handleDropdownToggle("guides")}
+              onClick={() => router.push("/blog")}
               className={`flex items-center space-x-1 text-foreground hover:text-green-600 transition-colors ${
                 activeDropdown === "guides"
                   ? "text-green-600 border-b-2 border-green-600"
                   : ""
               }`}
             >
-              <span>Guides & Resources</span>
-              {activeDropdown === "guides" ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
+              <span>Learning Center</span>
             </button>
 
-            {activeDropdown === "guides" && (
+            {false && (
               <div className="absolute top-full left-0 mt-2 w-[800px] max-h-[80vh] bg-white border rounded-lg shadow-lg p-6 grid grid-cols-4 gap-6 overflow-y-auto">
                 {/* Column 1: PLAN YOUR BUSINESS */}
                 <div>
@@ -414,7 +411,7 @@ export function Header() {
                   : ""
               }`}
             >
-              <span>About Us</span>
+              <span>Get To Know Us</span>
               {activeDropdown === "about" ? (
                 <ChevronUp className="h-4 w-4" />
               ) : (
@@ -425,9 +422,7 @@ export function Header() {
             {activeDropdown === "about" && (
               <div className="absolute top-full left-0 mt-2 w-64 bg-white border rounded-lg shadow-lg p-4">
                 <ul className="space-y-1">
-                  <MenuItem href="/about">Our Story</MenuItem>
-                  <MenuItem href="/about/team">Our Team</MenuItem>
-                  <MenuItem href="/about/mission">Mission & Values</MenuItem>
+                  <MenuItem href="/about">About Us</MenuItem>
                   <MenuItem href="/contact">Contact Us</MenuItem>
                 </ul>
               </div>
@@ -515,26 +510,14 @@ export function Header() {
 
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
-                Guides & Resources
+                Learning Center
               </h3>
               <div className="pl-4 space-y-2">
                 <Link
-                  href="/guides/llc-formation"
+                  href="/blog"
                   className="block text-sm text-gray-600 hover:text-green-600"
                 >
-                  How to Start an LLC
-                </Link>
-                <Link
-                  href="/guides/business-formation"
-                  className="block text-sm text-gray-600 hover:text-green-600"
-                >
-                  Business Formation Guide
-                </Link>
-                <Link
-                  href="/tools/business-name-generator"
-                  className="block text-sm text-gray-600 hover:text-green-600"
-                >
-                  Business Name Generator
+                  Visit our Blog
                 </Link>
               </div>
             </div>
