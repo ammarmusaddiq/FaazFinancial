@@ -1,6 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export function CTASection() {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/services/llc-formation-2");
+  };
   return (
     <section className="py-20 bg-slate-900 text-white">
       <div className="container px-4 text-center">
@@ -43,6 +51,7 @@ export function CTASection() {
         </div>
 
         <Button
+          onClick={handleClick}
           size="lg"
           className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
         >
