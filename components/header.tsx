@@ -439,14 +439,15 @@ export function Header() {
             <Phone className="h-4 w-4" />
             <span>+1 307-400-1963</span>
           </span>
-          <Link href="/auth/login">
-            <Button
-              variant="ghost"
-              className="text-gray-600 hover:text-green-600"
-            >
-              Log In
-            </Button>
-          </Link>
+
+          <Button
+            variant="ghost"
+            className="text-gray-600 hover:text-green-600"
+            onClick={() => router.push("/auth/login2")}
+          >
+            Log In
+          </Button>
+
           <Link href="/start-business">
             <Button
               variant="outline"

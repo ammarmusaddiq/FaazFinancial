@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import { supabase } from "../../../lib/supabaseClient";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,30 +16,36 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     try {
-      // Simulate login delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      // For demo purposes, accept any email/password
-      if (email && password) {
-        router.push("/dashboard");
+      console.log("Supabase response:", { data, error });
+
+      if (error) {
+        toast.error(error.message || "Invalid email or password");
       } else {
-        throw new Error("Please enter email and password");
+        toast.success("Login successful!");
+        router.push("/dashboard");
       }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      toast.error("Something went wrong, please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -47,6 +53,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-50 flex items-center justify-center p-6">
+      {/* Toast notifications */}
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-2">
@@ -90,11 +99,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                {error && (
-                  <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                    {error}
-                  </div>
-                )}
+
                 <Button
                   type="submit"
                   className="w-full bg-cyan-600 hover:bg-cyan-700"
