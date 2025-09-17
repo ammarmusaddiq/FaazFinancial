@@ -93,7 +93,7 @@ export default function SignUpPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSignUp}>
+            <form onSubmit={handleSignUp} autoComplete="off">
               <div className="flex flex-col gap-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>

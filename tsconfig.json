@@ -29,7 +29,8 @@
     ".next/types/**/*.ts",
     "app/auth/login2/page.tsx",
     "app/auth/sign-up2/page.jsx",
-    "app/dashboard/page.jsx"
+    "app/dashboard/page.jsx",
+    "components/header.jsx"
   ],
   "exclude": ["node_modules"]
 }

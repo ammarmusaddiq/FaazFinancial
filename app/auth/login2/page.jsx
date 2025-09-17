@@ -41,7 +41,8 @@ export default function LoginPage() {
         toast.error(error.message || "Invalid email or password");
       } else {
         toast.success("Login successful!");
-        router.push("/dashboard");
+        // router.push("/dashboard");
+        router.push("/");
       }
     } catch (err) {
       console.error("Unexpected error:", err);
@@ -76,7 +77,7 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} autoComplete="off">
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email Address</Label>

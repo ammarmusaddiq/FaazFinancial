@@ -32,13 +32,13 @@ import {
 interface DashboardLayoutProps {
   children: React.ReactNode;
   user: any;
-  profile: any;
+  profileData: any;
 }
 
 export function DashboardLayout({
   children,
   user,
-  profile,
+  profileData,
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
@@ -82,9 +82,10 @@ export function DashboardLayout({
       current: false,
     },
   ];
-
-  const userInitials = profile
-    ? `${profile.first_name?.[0] || ""}${profile.last_name?.[0] || ""}`
+  console.log(profileData);
+  console.log(user);
+  const userInitials = profileData
+    ? `${profileData.firstname?.[0] || ""}${profileData.lastname?.[0] || ""}`
     : user.email?.[0]?.toUpperCase() || "U";
 
   return (
@@ -197,8 +198,9 @@ export function DashboardLayout({
                     </Avatar>
                     <div className="hidden sm:block text-left">
                       <div className="text-sm font-medium">
-                        {profile
-                          ? `${profile.first_name} ${profile?.last_name}`
+                        {console.log("profileData", profileData)}
+                        {profileData
+                          ? `${profileData.firstname} ${profileData?.lastname}`
                           : user?.email}
                       </div>
                       <div className="text-xs text-gray-500">{user?.email}</div>

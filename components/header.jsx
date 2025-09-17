@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Menu, X, Search, Phone } from "lucide-react";
 import {
@@ -16,17 +16,10 @@ import {
 } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 // Helper component for menu items
-const MenuItem = ({
-  href,
-  children,
-  truncate = false,
-}: {
-  href: string;
-  children: string;
-  truncate?: boolean;
-}) => (
+const MenuItem = ({ href, children, truncate = false }) => (
   <li>
     <Tooltip>
       <TooltipTrigger asChild>
@@ -48,10 +41,34 @@ const MenuItem = ({
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const router = useRouter();
+  const [session, setSession] = useState(null);
 
-  const handleDropdownToggle = (dropdown: string) => {
+  useEffect(() => {
+    // Get current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
+
+  const handleDropdownToggle = (dropdown) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
@@ -300,105 +317,6 @@ export function Header() {
             >
               <span>Learning Center</span>
             </button>
-
-            {false && (
-              <div className="absolute top-full left-0 mt-2 w-[800px] max-h-[80vh] bg-white border rounded-lg shadow-lg p-6 grid grid-cols-4 gap-6 overflow-y-auto">
-                {/* Column 1: PLAN YOUR BUSINESS */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    PLAN YOUR BUSINESS
-                  </h3>
-                  <ul className="space-y-1">
-                    <MenuItem href="/guides/llc-formation">
-                      How to Start an LLC
-                    </MenuItem>
-                    <MenuItem href="/guides/incorporation">
-                      How to Incorporate
-                    </MenuItem>
-                    <MenuItem href="/guides/s-corp">
-                      How to File an S Corp
-                    </MenuItem>
-                    <MenuItem href="/guides/start-business">
-                      How to Start a Business
-                    </MenuItem>
-                    <MenuItem href="/guides/compare-entities">
-                      Compare Business Entities
-                    </MenuItem>
-                    <MenuItem href="/guides/business-ideas">
-                      Business Ideas
-                    </MenuItem>
-                  </ul>
-                </div>
-
-                {/* Column 2: GROW YOUR BUSINESS */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    GROW YOUR BUSINESS
-                  </h3>
-                  <ul className="space-y-1">
-                    <MenuItem href="/guides/marketing-tips">
-                      Marketing Tips
-                    </MenuItem>
-                    <MenuItem href="/guides/after-llc">
-                      Steps After Forming an LLC
-                    </MenuItem>
-                    <MenuItem href="/guides/business-cards">
-                      Business Card Design
-                    </MenuItem>
-                    <MenuItem href="/guides/small-business-grants">
-                      Small Business Grants
-                    </MenuItem>
-                    <MenuItem href="/guides/small-business-loans">
-                      Small Business Loans
-                    </MenuItem>
-                    <MenuItem href="/guides/funding-llc">
-                      Funding Your LLC
-                    </MenuItem>
-                  </ul>
-                </div>
-
-                {/* Column 3: RUN YOUR BUSINESS */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    RUN YOUR BUSINESS
-                  </h3>
-                  <ul className="space-y-1">
-                    <MenuItem href="/guides/hiring">Guide to Hiring</MenuItem>
-                    <MenuItem href="/guides/insurance">
-                      Guide to SMB Insurance
-                    </MenuItem>
-                    <MenuItem href="/guides/webinars">Webinars</MenuItem>
-                    <MenuItem href="/guides/llc-tax-writeoffs">
-                      LLC Tax Write-Offs
-                    </MenuItem>
-                    <MenuItem href="/guides/llc-tax-classification">
-                      LLC Tax Classification
-                    </MenuItem>
-                  </ul>
-                </div>
-
-                {/* Column 4: FREE BUSINESS TOOLS */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
-                    FREE BUSINESS TOOLS
-                  </h3>
-                  <ul className="space-y-1">
-                    <MenuItem href="/tools/s-corp-calculator">
-                      S Corp Savings Calculator
-                    </MenuItem>
-                    <MenuItem href="/tools/entity-quiz">
-                      Entity Type Quiz
-                    </MenuItem>
-                    <MenuItem href="/tools/break-even-calculator">
-                      Break Even Calculator
-                    </MenuItem>
-                    <MenuItem href="/tools/business-name-generator">
-                      Business Name Generator
-                    </MenuItem>
-                  </ul>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* About Us Dropdown */}
@@ -440,22 +358,45 @@ export function Header() {
             <span>+1 307-400-1963</span>
           </span>
 
-          <Button
+          <div className="flex items-center gap-4">
+            {session ? (
+              <>
+                <span className="text-gray-700">
+                  {session.user?.email || "User"}
+                </span>
+                <Button onClick={handleLogout}>Log Out</Button>
+                <Button
+                  onClick={() => router.push("/dashboard")}
+                  variant="outline"
+                  className="border-black text-black hover:bg-black hover:text-white"
+                >
+                  Dashboard
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => router.push("/auth/login2")}>
+                  Log In
+                </Button>
+              </>
+            )}
+          </div>
+
+          {/* <Button
             variant="ghost"
             className="text-gray-600 hover:text-green-600"
-            onClick={() => router.push("/auth/login2")}
+            onClick={() => router.push("/auth/login")}
           >
             Log In
-          </Button>
-
-          <Link href="/start-business">
+          </Button> */}
+          {/* <Link href="/start-business">
             <Button
               variant="outline"
               className="border-black text-black hover:bg-black hover:text-white"
             >
               Start an LLC
             </Button>
-          </Link>
+          </Link> */}
         </div>
 
         {/* Mobile Menu Button */}
