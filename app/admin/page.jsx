@@ -1,28 +1,32 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { AdminOverview } from "@/components/admin/admin-overview";
-import { supabase } from "../../lib/supabaseClient";
+import { useAppContext } from "@/context/AppContext";
 
-export default async function AdminPage() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function AdminPage() {
+  const { session, isAdmin, loading } = useAppContext();
+  const router = useRouter();
 
-  if (!user) {
-    redirect("/auth/login2");
-  }
+  useEffect(() => {
+    if (loading) return; // Wait for context to load
 
-  // Check if user is admin
-  const { data: profile } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+    if (!session) {
+      router.push("/auth/login2");
+      return;
+    }
 
-  if (!profile || profile.role !== "admin") {
-    redirect("/dashboard");
+    if (!isAdmin) {
+      router.push("/dashboard");
+      return;
+    }
+  }, [session, isAdmin, loading, router]);
+
+  // Show loading while checking auth
+  if (loading || !session || !isAdmin) {
+    return <div>Loading...</div>;
   }
 
   return (
