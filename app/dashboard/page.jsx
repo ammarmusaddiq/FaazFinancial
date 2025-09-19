@@ -5,46 +5,45 @@ import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
 import { supabase } from "../../lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAppContext } from "@/context/AppContext";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
-  const [mockUser, setMockUser] = useState(null);
-  const [mockProfile, setMockProfile] = useState(null);
+  const { session, isAdmin, loading } = useAppContext();
+  const [profile, setProfile] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
-    // Fetch user data (email and id) from Supabase
+    if (loading) return; // Wait for context to load
 
-    const fetchUserData = async () => {
-      const { data, error: authError } = await supabase.auth.getUser();
-      if (authError || !data?.user) {
-        console.error("Auth Error:", authError);
-        return;
-      }
+    if (!session) {
+      router.push("/auth/login2");
+      return;
+    }
 
-      console.log("Fetched User:", data.user);
-      setMockUser(data.user);
+    if (isAdmin) {
+      router.push("/admin");
+      return;
+    }
 
-      // Fetch profile data from Supabase
-
+    if (!session?.user?.id) return;
+    
+    const fetchProfile = async () => {
       const { data: profileData, error: profileError } = await supabase
         .from("users")
         .select("*")
-        .eq("user_id", data.user.id)
+        .eq("user_id", session.user.id)
         .single();
       if (profileError) {
         console.error("Profile Error:", profileError);
         toast.error("Error fetching profile data");
         return;
       }
-
       console.log("Fetched Profile:", profileData);
-      setMockProfile(profileData);
+      setProfile(profileData);
     };
-
-    const fetchProfileData = async () => {};
-
-    fetchUserData();
-    // fetchProfileData();
-  }, []);
+    fetchProfile();
+  }, [session, isAdmin, loading, router]);
 
   // const mockUser = {
   //   id: "1",
@@ -78,19 +77,19 @@ export default function DashboardPage() {
     },
   ];
 
+  // Show loading while checking auth or fetching profile
+  if (loading || !session || isAdmin || !profile) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <>
-      {!mockUser && !mockProfile && <div>Loading...</div>}
-      {mockUser && mockProfile && (
-        <DashboardLayout user={mockUser} profileData={mockProfile}>
-          <DashboardOverview
-            user={mockUser}
-            profile={mockProfile}
-            formations={mockFormations}
-            services={mockServices}
-          />
-        </DashboardLayout>
-      )}
-    </>
+    <DashboardLayout user={session.user} profileData={profile}>
+      <DashboardOverview
+        user={session.user}
+        profile={profile}
+        formations={mockFormations}
+        services={mockServices}
+      />
+    </DashboardLayout>
   );
 }
