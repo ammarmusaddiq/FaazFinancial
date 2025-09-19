@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Menu, X, Search, Phone } from "lucide-react";
 import {
@@ -23,7 +23,11 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-
+import {
+  AuthContext,
+  AppContextProvider,
+  useAppContext,
+} from "@/context/AppContext";
 // Helper component for menu items
 const MenuItem = ({ href, children, truncate = false }) => (
   <li>
@@ -45,29 +49,101 @@ const MenuItem = ({ href, children, truncate = false }) => (
   </li>
 );
 
-export function Header() {
+export function HeaderComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const router = useRouter();
+  // const user = useAppContext();
+  const auth = useContext(AuthContext);
+
+  // console.log("isAdmin:", isAdmin);
+  // console.log("profile:", profile);
+  console.log("user details:", auth);
+  // console.log("session:", session);
+
   const [session, setSession] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  async function fetchData() {
+    const { data, error } = await supabase
+      .from("users")
+      .select("role , user_id")
+      .eq("user_id", session?.user?.id)
+      .single();
+    console.log("users_data:", data);
+    console.log("users_id:", session.user.id);
+
+    if (error) {
+      console.error("Error fetching data:", error.message);
+      return null;
+    }
+    return data;
+  }
 
   useEffect(() => {
     // Get current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      console.log("session_details:", session);
+
+      //     /* --------------- yaa se already commented out --------------- */
+
+      //     // const getRole = async () => {
+      //     //   const {
+      //     //     data: { user },
+      //     //   } = await supabase.auth.getUser();
+
+      //     //   if (!user) return;
+
+      //     //   const { data: role } = await supabase
+      //     //     .from("users")
+      //     //     .select("role")
+      //     //     .eq("user_id", user.id)
+      //     //     .single();
+      //     // };
+      //     // console.log("getRole:", role);
+
+      //     /* -------------- Yaa tak already commented out -------------- */
+
+      const getRole = async () => {
+        const { data } = await supabase
+          .from("users")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .single();
+
+        if (data?.role === "admin") {
+          setIsAdmin(true);
+        }
+      };
+
+      getRole();
     });
 
     // Listen for auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+        // if (session?.user?.role === "admin") {
+        //   setIsAdmin(true);
       }
     );
 
     return () => {
       listener.subscription.unsubscribe();
     };
+
+    getRole();
   }, []);
+
+  const submitButton = () => {
+    console.log("isAdmin:", isAdmin);
+    if (isAdmin) {
+      router.push("/admin");
+    } else {
+      router.push("/dashboard");
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -373,8 +449,9 @@ export function Header() {
                 <Button size="sm" onClick={handleLogout}>
                   Log Out
                 </Button>
+
                 <Button
-                  onClick={() => router.push("/dashboard")}
+                  onClick={submitButton}
                   variant="outline"
                   size="sm"
                   className="border-black text-black hover:bg-black hover:text-white"
@@ -858,5 +935,13 @@ export function Header() {
         />
       )}
     </header>
+  );
+}
+
+export function Header() {
+  return (
+    <AppContextProvider>
+      <HeaderComponent />
+    </AppContextProvider>
   );
 }

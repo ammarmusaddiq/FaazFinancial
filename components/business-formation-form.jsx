@@ -1,15 +1,25 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "next/navigation";
 
 const US_STATES = [
   "Alabama",
@@ -62,22 +72,22 @@ const US_STATES = [
   "West Virginia",
   "Wisconsin",
   "Wyoming",
-]
+];
 
 export function BusinessFormationForm() {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     businessName: "",
     businessType: "",
     state: "",
     address: "",
     ownerInfo: "",
-  })
-  const router = useRouter()
+  });
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await fetch("/api/business-formation", {
@@ -86,27 +96,29 @@ export function BusinessFormationForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
-        router.push("/dashboard?success=business-created")
+        router.push("/dashboard?success=business-created");
       } else {
-        const error = await response.json()
-        alert(error.error || "Failed to submit business formation")
+        const error = await response.json();
+        alert(error.error || "Failed to submit business formation");
       }
     } catch (error) {
-      console.error("Error submitting form:", error)
-      alert("Failed to submit business formation")
+      console.error("Error submitting form:", error);
+      alert("Failed to submit business formation");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Start Your Business Formation</CardTitle>
-        <CardDescription>Fill out the form below to begin your business formation process</CardDescription>
+        <CardDescription>
+          Fill out the form below to begin your business formation process
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -115,7 +127,9 @@ export function BusinessFormationForm() {
             <Input
               id="businessName"
               value={formData.businessName}
-              onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, businessName: e.target.value })
+              }
               placeholder="Enter your business name"
               required
             />
@@ -125,17 +139,23 @@ export function BusinessFormationForm() {
             <Label htmlFor="businessType">Business Type</Label>
             <Select
               value={formData.businessType}
-              onValueChange={(value) => setFormData({ ...formData, businessType: value })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, businessType: value })
+              }
               required
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select business type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="LLC">LLC (Limited Liability Company)</SelectItem>
+                <SelectItem value="LLC">
+                  LLC (Limited Liability Company)
+                </SelectItem>
                 <SelectItem value="Corporation">Corporation</SelectItem>
                 <SelectItem value="Partnership">Partnership</SelectItem>
-                <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
+                <SelectItem value="Sole Proprietorship">
+                  Sole Proprietorship
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -144,7 +164,9 @@ export function BusinessFormationForm() {
             <Label htmlFor="state">State of Formation</Label>
             <Select
               value={formData.state}
-              onValueChange={(value) => setFormData({ ...formData, state: value })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, state: value })
+              }
               required
             >
               <SelectTrigger>
@@ -165,7 +187,9 @@ export function BusinessFormationForm() {
             <Textarea
               id="address"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
               placeholder="Enter your business address"
               rows={3}
             />
@@ -176,7 +200,9 @@ export function BusinessFormationForm() {
             <Textarea
               id="ownerInfo"
               value={formData.ownerInfo}
-              onChange={(e) => setFormData({ ...formData, ownerInfo: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, ownerInfo: e.target.value })
+              }
               placeholder="Enter owner/member information"
               rows={3}
             />
@@ -188,5 +214,5 @@ export function BusinessFormationForm() {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

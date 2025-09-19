@@ -1,22 +1,22 @@
-import { createServerClient } from "@/lib/supabase/server";
+"use client";
+
 import { redirect } from "next/navigation";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { AdminOverview } from "@/components/admin/admin-overview";
+import { supabase } from "../../lib/supabaseClient";
 
 export default async function AdminPage() {
-  const supabase = createServerClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/auth/login");
+    redirect("/auth/login2");
   }
 
   // Check if user is admin
   const { data: profile } = await supabase
-    .from("profiles")
+    .from("users")
     .select("role")
     .eq("id", user.id)
     .single();

@@ -30,7 +30,11 @@
     "app/auth/login2/page.tsx",
     "app/auth/sign-up2/page.jsx",
     "app/dashboard/page.jsx",
-    "components/header.jsx"
+    "components/header.jsx",
+    "app/admin/page.jsx",
+    "components/business-formation-form.jsx",
+    "app/start-business/page.jsx",
+    "app/layout.jsx"
   ],
   "exclude": ["node_modules"]
 }
