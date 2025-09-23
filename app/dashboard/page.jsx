@@ -5,46 +5,48 @@ import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
 import { supabase } from "../../lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuthContext } from "@/context/AppContext";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { user, isAdmin, loading } = useAuthContext();
   const [mockUser, setMockUser] = useState(null);
   const [mockProfile, setMockProfile] = useState(null);
 
   useEffect(() => {
-    // Fetch user data (email and id) from Supabase
+    if (loading) return;
+    if (!user) {
+      router.push("/auth/login2");
+      return;
+    }
+    if (isAdmin) {
+      router.push("/admin");
+      return;
+    }
 
-    const fetchUserData = async () => {
-      const { data, error: authError } = await supabase.auth.getUser();
-      if (authError || !data?.user) {
-        console.error("Auth Error:", authError);
-        return;
+    const fetchUserProfile = async () => {
+      try {
+        setMockUser(user);
+        const { data: profileData, error: profileError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+        if (profileError) {
+          console.error("Profile Error:", profileError);
+          toast.error("Error fetching profile data");
+          return;
+        }
+        setMockProfile(profileData);
+      } catch (e) {
+        console.error("Unexpected error fetching profile:", e);
+        toast.error("Something went wrong.");
       }
-
-      console.log("Fetched User:", data.user);
-      setMockUser(data.user);
-
-      // Fetch profile data from Supabase
-
-      const { data: profileData, error: profileError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("user_id", data.user.id)
-        .single();
-      if (profileError) {
-        console.error("Profile Error:", profileError);
-        toast.error("Error fetching profile data");
-        return;
-      }
-
-      console.log("Fetched Profile:", profileData);
-      setMockProfile(profileData);
     };
 
-    const fetchProfileData = async () => {};
-
-    fetchUserData();
-    // fetchProfileData();
-  }, []);
+    fetchUserProfile();
+  }, [loading, user, isAdmin, router]);
 
   // const mockUser = {
   //   id: "1",

@@ -1,7 +1,5 @@
 "use client";
 
-import { supabase } from "../../../lib/supabaseClient";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuthContext } from "@/context/AppContext";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,29 +23,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAuthContext();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      console.log("Supabase response:", { data, error });
-
-      if (error) {
-        toast.error(error.message || "Invalid email or password");
-      } else {
-        toast.success("Login successful!");
-        // router.push("/dashboard");
-        router.push("/");
-      }
+      await login({ email, password });
+      toast.success("Login successful!");
+      router.push("/");
     } catch (err) {
       console.error("Unexpected error:", err);
-      toast.error("Something went wrong, please try again.");
+      const message = err?.message || "Invalid email or password";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

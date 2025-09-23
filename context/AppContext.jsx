@@ -1,82 +1,97 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const router = useRouter(); // ✅ define router
+  const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    if (password !== repeatPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
+  const loadRole = async (userId) => {
+    if (!userId) {
+      setIsAdmin(false);
       return;
     }
-
-    if (!agreeToTerms) {
-      setError("Please agree to the Terms of Service and Privacy Policy");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      // Insert extra user info into your "users" table
-      await supabase.from("users").insert({
-        user_id: data.user.id,
-        email: email,
-        firstname: firstName,
-        lastname: lastName,
-        role: "user", // 👈 optional role field
-      });
-
-      router.push("/auth/sign-up-success");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+    const { data, error } = await supabase
+      .from("users")
+      .select("role")
+      .eq("user_id", userId)
+      .single();
+    if (!error && data?.role === "admin") {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
     }
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        firstName,
-        lastName,
+  useEffect(() => {
+    let subscription;
+    const init = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+      setUser(session?.user ?? null);
+      await loadRole(session?.user?.id);
+      setLoading(false);
+
+      const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        await loadRole(session?.user?.id);
+      });
+      subscription = data.subscription;
+    };
+    init();
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
+  }, []);
+
+  const login = async ({ email, password }) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
+  };
+
+  const signup = async ({ email, password, firstName, lastName }) => {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+    if (data?.user?.id) {
+      await supabase.from("users").insert({
+        user_id: data.user.id,
         email,
-        password,
-        repeatPassword,
-        agreeToTerms,
-        error,
-        isLoading,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+        firstname: firstName,
+        lastname: lastName,
+        role: "user",
+      });
+    }
+    return data;
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+    setIsAdmin(false);
+    toast.success("Logged out successfully");
+    router.replace("/");
+  };
+
+  const value = useMemo(
+    () => ({ user, session, isAdmin, loading, login, signup, logout }),
+    [user, session, isAdmin, loading]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// ✅ Custom hook
 export const useAuthContext = () => useContext(AuthContext);

@@ -43,50 +43,27 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { AdminOverview } from "@/components/admin/admin-overview";
-import { supabase } from "@/lib/supabaseClient";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAuthContext } from "@/context/AppContext";
 
 export default function AdminPage() {
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
+  const { isAdmin, loading, user } = useAuthContext();
 
   useEffect(() => {
-    const checkUserRole = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (loading) return;
+    if (!user) {
+      router.push("/auth/login2");
+      return;
+    }
+    if (!isAdmin) {
+      router.push("/dashboard");
+      return;
+    }
+  }, [loading, user, isAdmin, router]);
 
-      if (!user) {
-        router.push("/dashboard");
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("users")
-        .select("role")
-        .eq("user_id", user.id)
-        .single();
-
-      if (error || !data || data.role !== "admin") {
-        router.push("/dashboard");
-      } else {
-        setIsAdmin(true);
-      }
-
-      setLoading(false);
-    };
-
-    checkUserRole();
-  }, [router]);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (!isAdmin) {
-    return null; // prevent flicker before redirect
-  }
+  if (loading) return <LoadingSpinner />;
+  if (!user || !isAdmin) return null;
 
   return (
     <AdminLayout>

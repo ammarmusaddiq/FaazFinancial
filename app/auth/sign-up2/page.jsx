@@ -14,7 +14,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { supabase } from "../../../lib/supabaseClient";
 import { useAuthContext } from "@/context/AppContext";
 
 export default function SignUpPage() {
@@ -27,6 +26,7 @@ export default function SignUpPage() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { signup } = useAuthContext();
   // const {
   //   firstName,
   //   lastName,
@@ -52,7 +52,6 @@ export default function SignUpPage() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    // const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
@@ -69,20 +68,7 @@ export default function SignUpPage() {
     }
 
     try {
-      const credentials = await supabase.auth.signUp({
-        email,
-        password,
-        firstName,
-        lastName,
-      });
-      console.log(credentials);
-      await supabase.from("users").insert({
-        email: email,
-        firstname: firstName,
-        lastname: lastName,
-        password: password,
-        user_id: credentials.data.user.id,
-      });
+      await signup({ email, password, firstName, lastName });
       router.push("/auth/sign-up-success");
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
