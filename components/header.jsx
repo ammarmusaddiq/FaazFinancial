@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { toast } from "react-toastify";
 
 // Helper component for menu items
 const MenuItem = ({ href, children, truncate = false }) => (
@@ -50,17 +51,50 @@ export function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const router = useRouter();
   const [session, setSession] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     // Get current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+    // supabase.auth.getSession().then(({ data: { session } }) => {
+    //   setSession(session);
 
-    // Listen for auth state changes
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+      console.log("session at login", session);
+      console.log("user id of current user", session?.user?.id);
+
+      const { data: user } = await supabase.auth.getUser();
+      console.log("user from getUser", user);
+
+      const { data: userRole } = await supabase
+        .from("users") // your custom table
+        .select("role")
+        .eq("user_id", user?.user?.id)
+        .single();
+
+      console.log("User Role:", userRole);
+      setUserRole(userRole);
+    };
+
+    getSession();
+
+    // if (session?.user) {
+    //   await fetchUserRole(session.user.id);
+    // }
+
+    // Listen for auth state changes like user login or logout
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+
+        // if (session?.user) {
+        //   await fetchUserRole(session.user.id);
+        // } else {
+        //   setUserRole(null);
+        // }
       }
     );
 
@@ -69,9 +103,33 @@ export function Header() {
     };
   }, []);
 
+  // const fetchUserRole = async (userId) => {
+  //   const { data: userRole, error } = await supabase
+  //     .from("users") // your custom table
+  //     .select("role")
+  //     .eq("id", userId)
+  //     .single();
+
+  //   console.log("User Role:", userRole);
+
+  //   if (error) {
+  //     console.error("Error fetching role:", error);
+  //   } else {
+  //     setUserRole(userRole.role);
+  //   }
+  // };
+
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+    try {
+      await supabase.auth.signOut();
+      setSession(null);
+      console.log("session at logout", session);
+      toast.success("Logged out successfully");
+      router.push("/");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error("Error logging out");
+    }
   };
 
   const handleDropdownToggle = (dropdown) => {
@@ -374,7 +432,11 @@ export function Header() {
                   Log Out
                 </Button>
                 <Button
-                  onClick={() => router.push("/dashboard")}
+                  onClick={() =>
+                    userRole === "user"
+                      ? router.push("/dashboard")
+                      : router.push("/admin")
+                  }
                   variant="outline"
                   size="sm"
                   className="border-black text-black hover:bg-black hover:text-white"

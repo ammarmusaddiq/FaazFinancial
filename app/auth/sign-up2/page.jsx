@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { supabase } from "../../../lib/supabaseClient";
+import { useAuthContext } from "@/context/AppContext";
 
 export default function SignUpPage() {
   const [firstName, setFirstName] = useState("");
@@ -26,6 +27,28 @@ export default function SignUpPage() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  // const {
+  //   firstName,
+  //   lastName,
+  //   email,
+  //   password,
+  //   repeatPassword,
+  //   agreeToTerms,
+  //   error,
+  //   isLoading,
+  // } = useAuthContext();
+
+  // console.log(
+  //   "data = ",
+  //   firstName,
+  //   lastName,
+  //   email,
+  //   password,
+  //   repeatPassword,
+  //   agreeToTerms,
+  //   error,
+  //   isLoading
+  // );
 
   const handleSignUp = async (e) => {
     e.preventDefault();

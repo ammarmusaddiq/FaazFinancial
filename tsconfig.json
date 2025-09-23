@@ -30,7 +30,9 @@
     "app/auth/login2/page.tsx",
     "app/auth/sign-up2/page.jsx",
     "app/dashboard/page.jsx",
-    "components/header.jsx"
+    "components/header.jsx",
+    "app/admin/page.jsx",
+    "components/admin/admin-layout.jsx"
   ],
   "exclude": ["node_modules"]
 }
