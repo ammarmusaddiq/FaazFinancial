@@ -21,9 +21,9 @@ export const AppContextProvider = ({ children }) => {
       return;
     }
     const { data, error } = await supabase
-      .from("users")
+      .from("user_data")
       .select("role")
-      .eq("user_id", userId)
+      .eq("auth_user_id", userId)
       .single();
     if (!error && data?.role === "admin") {
       setIsAdmin(true);
@@ -43,11 +43,13 @@ export const AppContextProvider = ({ children }) => {
       await loadRole(session?.user?.id);
       setLoading(false);
 
-      const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        await loadRole(session?.user?.id);
-      });
+      const { data } = supabase.auth.onAuthStateChange(
+        async (_event, session) => {
+          setSession(session);
+          setUser(session?.user ?? null);
+          await loadRole(session?.user?.id);
+        }
+      );
       subscription = data.subscription;
     };
     init();
@@ -57,7 +59,10 @@ export const AppContextProvider = ({ children }) => {
   }, []);
 
   const login = async ({ email, password }) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) throw error;
     return data;
   };
@@ -66,11 +71,11 @@ export const AppContextProvider = ({ children }) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
     if (data?.user?.id) {
-      await supabase.from("users").insert({
-        user_id: data.user.id,
+      await supabase.from("user_data").insert({
+        auth_user_id: data.user.id,
         email,
-        firstname: firstName,
-        lastname: lastName,
+        first_name: firstName,
+        last_name: lastName,
         role: "user",
       });
     }

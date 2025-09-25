@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -28,25 +26,27 @@ import {
   User,
   Bell,
 } from "lucide-react";
+import { toast } from "react-toastify";
 
-interface DashboardLayoutProps {
-  children: React.ReactNode;
-  user: any;
-  profileData: any;
-}
-
-export function DashboardLayout({
-  children,
-  user,
-  profileData,
-}: DashboardLayoutProps) {
+export function DashboardLayout({ children, user, profileData }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/");
+    // const supabase = createClient();
+    // await supabase.auth.signOut();
+    // router.push("/");
+
+    try {
+      await supabase.auth.signOut();
+      // setSession(null);
+
+      toast.success("Logged out successfully");
+      router.push("/");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error("Error logging out");
+    }
   };
 
   const navigation = [
@@ -82,11 +82,10 @@ export function DashboardLayout({
       current: false,
     },
   ];
-  console.log(profileData);
-  console.log(user);
+
   const userInitials = profileData
     ? `${profileData.firstname?.[0] || ""}${profileData.lastname?.[0] || ""}`
-    : user.email?.[0]?.toUpperCase() || "U";
+    : user?.email?.[0]?.toUpperCase() || "U";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -198,7 +197,6 @@ export function DashboardLayout({
                     </Avatar>
                     <div className="hidden sm:block text-left">
                       <div className="text-sm font-medium">
-                        {console.log("profileData", profileData)}
                         {profileData
                           ? `${profileData.firstname} ${profileData?.lastname}`
                           : user?.email}

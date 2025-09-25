@@ -32,7 +32,10 @@
     "app/dashboard/page.jsx",
     "components/header.jsx",
     "app/admin/page.jsx",
-    "components/admin/admin-layout.jsx"
+    "components/admin/admin-layout.jsx",
+    "components/dashboard/dashboard-layout.jsx",
+    "components/business-formation-form.jsx",
+    "app/api/business-formation/route.js"
   ],
   "exclude": ["node_modules"]
 }
