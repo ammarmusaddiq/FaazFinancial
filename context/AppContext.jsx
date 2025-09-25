@@ -20,14 +20,26 @@ export const AppContextProvider = ({ children }) => {
       setIsAdmin(false);
       return;
     }
-    const { data, error } = await supabase
-      .from("user_data")
-      .select("role")
-      .eq("auth_user_id", userId)
-      .single();
-    if (!error && data?.role === "admin") {
-      setIsAdmin(true);
-    } else {
+    try {
+      const { data, error } = await supabase
+        .from("user_data")
+        .select("role")
+        .eq("auth_user_id", userId)
+        .maybeSingle(); // Use maybeSingle() instead of single()
+      
+      if (error) {
+        console.warn("Error loading user role:", error);
+        setIsAdmin(false);
+        return;
+      }
+      
+      if (data?.role === "admin") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      console.warn("Error in loadRole:", error);
       setIsAdmin(false);
     }
   };
@@ -71,13 +83,17 @@ export const AppContextProvider = ({ children }) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
     if (data?.user?.id) {
-      await supabase.from("user_data").insert({
+      const { error: insertError } = await supabase.from("user_data").insert({
         auth_user_id: data.user.id,
         email,
         first_name: firstName,
         last_name: lastName,
         role: "user",
       });
+      if (insertError) {
+        console.error("Error inserting user data:", insertError);
+        // Don't throw here as the user is still created in auth, just log the error
+      }
     }
     return data;
   };
