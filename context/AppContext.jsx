@@ -14,6 +14,7 @@ export const AppContextProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  // const [tableId, setTableId] = useState("5");
 
   const loadRole = async (userId) => {
     if (!userId) {
@@ -24,7 +25,7 @@ export const AppContextProvider = ({ children }) => {
       .from("user_data")
       .select("role")
       .eq("auth_user_id", userId)
-      .single();
+      .maybeSingle();
     if (!error && data?.role === "admin") {
       setIsAdmin(true);
     } else {
@@ -57,6 +58,16 @@ export const AppContextProvider = ({ children }) => {
       if (subscription) subscription.unsubscribe();
     };
   }, []);
+
+  // const table_id = async () => {
+  //   const { data: user_data } = await supabase
+  //     .from("user_data")
+  //     .select("id")
+  //     .eq("auth_user_id", user?.id)
+  //     .single();
+  //   setTableId(user_data?.id);
+  //   console.log("user_data :", user_data);
+  // };
 
   const login = async ({ email, password }) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -92,7 +103,15 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ user, session, isAdmin, loading, login, signup, logout }),
+    () => ({
+      user,
+      session,
+      isAdmin,
+      loading,
+      login,
+      signup,
+      logout,
+    }),
     [user, session, isAdmin, loading]
   );
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { useAuthContext } from "@/context/AppContext";
 
 const US_STATES = [
   "Alabama",
@@ -118,15 +119,84 @@ export function BusinessFormationForm() {
 
   const router = useRouter();
 
+  // const submitForm = async () => {
+  //   try {
+  //     console.log("submitting form");
+  //     await supabase.from("form_submissions").insert({
+  //       user_id: "3e57e03c-c95e-49a9-b6a3-4d29ef4c6af0",
+  //       service_name: "LLC Formation",
+  //       form_data: {
+  //         data: "data1",
+  //         data2: "data2",
+  //         data3: "data3",
+  //         data4: "data4",
+  //         data5: "data5",
+  //         data6: "data6",
+  //         data7: "data7",
+  //         data8: "data8",
+  //       },
+  //       status: "pending",
+  //     });
+
+  //     console.log("form submitted");
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //     alert("Something went wrong.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const { user } = useAuthContext();
+  const [userPersonalId, setUserPersonalId] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user?.id) return;
+      console.log("user :", user);
+
+      const { data, error } = await supabase
+        .from("user_data")
+        .select("id")
+        .eq("auth_user_id", user?.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching user data:", error);
+      } else {
+        console.log("user data :", data);
+        setUserPersonalId(data.id);
+        console.log("user personal id :", data.id);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  // })
+  // console.log("user :", user);
+
+  // const { data } = supabase
+  //   .from("user_data")
+  //   .select("id")
+  //   .eq("auth_user_id", user?.id)
+  //   .single();
+
+  // console.log("user_data :", data);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    console.log("userPersonalId :", userPersonalId);
 
     try {
       const {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
+
+      console.log("user :", user);
 
       if (!user || userError) {
         alert("Please login to submit business formation", userError);
@@ -138,14 +208,21 @@ export function BusinessFormationForm() {
         members,
       };
 
-      const { error } = await supabase.from("submissions").insert([
+      console.log(
+        "submissionData inserting into form_submissions",
+        submissionData
+      );
+
+      const { error } = await supabase.from("form_submissions").insert([
         {
-          user_id: user.id,
-          service_id: service.id,
+          user_id: userPersonalId,
+          service_name: "LLC Formation",
           form_data: submissionData,
           status: "pending",
         },
       ]);
+
+      console.log("form_submissions inserted successfully");
 
       /* --------------- Old Code --------------- */
 
@@ -197,29 +274,6 @@ export function BusinessFormationForm() {
     } finally {
       setLoading(false);
     }
-    //   const response = await supabase.from("business_formation").insert({
-    //     // method: "POST",
-    //     // headers: {
-    //     //   "Content-Type": "application/json",
-    //     // },
-    //     ...formData,
-    //   });
-
-    //   if (response.error) {
-    //     // router.push("/dashboard?success=business-created");
-    //     console.log("Business formation submitted successfully", response);
-    //   } else {
-    //     const error = await response.error;
-    //     console.log("Error submitting business formation", error);
-    //     alert(error.error || "Failed to submit business formation");
-    //     alert("Failed to submit business formation");
-    //   }
-    // } catch (error) {
-    //   console.error("Error submitting form:", error);
-    //   alert("Failed to submit business formation");
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   return (
@@ -269,18 +323,6 @@ export function BusinessFormationForm() {
               />
             </div>
           </div>
-          {/* <div className="space-y-2">
-            <Label htmlFor="businessName">Business Name</Label>
-            <Input
-              id="businessName"
-              value={formData.businessName}
-              onChange={(e) =>
-                setFormData({ ...formData, businessName: e.target.value })
-              }
-              placeholder="Enter your business name"
-              required
-            />
-          </div> */}
 
           <hr style={{ border: "1px solid #e0e0e0" }} />
           <div className="space-y-2">
@@ -721,6 +763,8 @@ export function BusinessFormationForm() {
             {loading ? "Submitting..." : "Start Business Formation"}
           </Button>
         </form>
+
+        {/* <Button onClick={() => submitForm()}>submitForm</Button> */}
       </CardContent>
     </Card>
   );

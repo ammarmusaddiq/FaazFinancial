@@ -84,7 +84,7 @@ export function DashboardLayout({ children, user, profileData }) {
   ];
 
   const userInitials = profileData
-    ? `${profileData.firstname?.[0] || ""}${profileData.lastname?.[0] || ""}`
+    ? `${profileData.first_name?.[0] || ""}${profileData.last_name?.[0] || ""}`
     : user?.email?.[0]?.toUpperCase() || "U";
 
   return (
@@ -198,7 +198,7 @@ export function DashboardLayout({ children, user, profileData }) {
                     <div className="hidden sm:block text-left">
                       <div className="text-sm font-medium">
                         {profileData
-                          ? `${profileData.firstname} ${profileData?.lastname}`
+                          ? `${profileData.first_name} ${profileData?.last_name}`
                           : user?.email}
                       </div>
                       <div className="text-xs text-gray-500">{user?.email}</div>

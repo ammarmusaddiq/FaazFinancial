@@ -29,9 +29,9 @@ export default function DashboardPage() {
       try {
         setMockUser(user);
         const { data: profileData, error: profileError } = await supabase
-          .from("users")
+          .from("user_data")
           .select("*")
-          .eq("user_id", user.id)
+          .eq("auth_user_id", user.id)
           .single();
         if (profileError) {
           console.error("Profile Error:", profileError);

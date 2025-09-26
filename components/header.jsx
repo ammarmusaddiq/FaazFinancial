@@ -63,19 +63,19 @@ export function Header() {
         data: { session },
       } = await supabase.auth.getSession();
       setSession(session);
-      console.log("session at login", session);
-      console.log("user id of current user", session?.user?.id);
+      // console.log("session at login", session);
+      // console.log("user id of current user", session?.user?.id);
 
       const { data: user } = await supabase.auth.getUser();
-      console.log("user from getUser", user);
+      // console.log("user from getUser", user);
 
       const { data: userRole } = await supabase
-        .from("users") // your custom table
+        .from("user_data") // your custom table
         .select("role")
-        .eq("user_id", user?.user?.id)
+        .eq("auth_user_id", user?.user?.id)
         .single();
 
-      console.log("User Role:", userRole);
+      // console.log("User Role:", userRole);
       setUserRole(userRole);
     };
 
