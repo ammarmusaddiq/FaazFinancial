@@ -34,8 +34,9 @@
     "app/admin/page.jsx",
     "components/admin/admin-layout.jsx",
     "components/dashboard/dashboard-layout.jsx",
-    "components/business-formation-form.jsx",
-    "app/api/business-formation/route.js"
+    "components/submission-forms/business-formation-form.jsx",
+    "app/api/business-formation/route.js",
+    "app/start-business/page.jsx"
   ],
   "exclude": ["node_modules"]
 }

@@ -21,7 +21,6 @@ export const AppContextProvider = ({ children }) => {
       setIsAdmin(false);
       return;
     }
-<<<<<<< HEAD
     const { data, error } = await supabase
       .from("user_data")
       .select("role")
@@ -30,28 +29,6 @@ export const AppContextProvider = ({ children }) => {
     if (!error && data?.role === "admin") {
       setIsAdmin(true);
     } else {
-=======
-    try {
-      const { data, error } = await supabase
-        .from("user_data")
-        .select("role")
-        .eq("auth_user_id", userId)
-        .maybeSingle(); // Use maybeSingle() instead of single()
-      
-      if (error) {
-        console.warn("Error loading user role:", error);
-        setIsAdmin(false);
-        return;
-      }
-      
-      if (data?.role === "admin") {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
-      }
-    } catch (error) {
-      console.warn("Error in loadRole:", error);
->>>>>>> 58e969dd032810ccc1b0cb5ef2caa9dd6ace4a44
       setIsAdmin(false);
     }
   };

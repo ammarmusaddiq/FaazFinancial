@@ -119,34 +119,6 @@ export function BusinessFormationForm() {
 
   const router = useRouter();
 
-  // const submitForm = async () => {
-  //   try {
-  //     console.log("submitting form");
-  //     await supabase.from("form_submissions").insert({
-  //       user_id: "3e57e03c-c95e-49a9-b6a3-4d29ef4c6af0",
-  //       service_name: "LLC Formation",
-  //       form_data: {
-  //         data: "data1",
-  //         data2: "data2",
-  //         data3: "data3",
-  //         data4: "data4",
-  //         data5: "data5",
-  //         data6: "data6",
-  //         data7: "data7",
-  //         data8: "data8",
-  //       },
-  //       status: "pending",
-  //     });
-
-  //     console.log("form submitted");
-  //   } catch (error) {
-  //     console.error("Error submitting form:", error);
-  //     alert("Something went wrong.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const { user } = useAuthContext();
   const [userPersonalId, setUserPersonalId] = useState(null);
 
@@ -173,22 +145,9 @@ export function BusinessFormationForm() {
     fetchUserData();
   }, [user]);
 
-  // })
-  // console.log("user :", user);
-
-  // const { data } = supabase
-  //   .from("user_data")
-  //   .select("id")
-  //   .eq("auth_user_id", user?.id)
-  //   .single();
-
-  // console.log("user_data :", data);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    console.log("userPersonalId :", userPersonalId);
 
     try {
       const {
@@ -196,6 +155,7 @@ export function BusinessFormationForm() {
         error: userError,
       } = await supabase.auth.getUser();
 
+      console.log("userPersonalId :", userPersonalId);
       console.log("user :", user);
 
       if (!user || userError) {
@@ -224,50 +184,7 @@ export function BusinessFormationForm() {
 
       console.log("form_submissions inserted successfully");
 
-      /* --------------- Old Code --------------- */
-
-      // const { error } = await supabase.from("business_formations").insert([
-      //   {
-      //     user_id: user.id, // tie record to logged-in user
-      //     desired_company_name: formData.desiredCompanyName,
-      //     alternative_company_name: formData.alternativeCompanyName,
-      //     business_name: formData.businessName,
-      //     business_type: formData.businessType,
-      //     state: formData.state,
-      //     address: formData.address,
-      //     first_name: members[0]?.firstName || "",
-      //     middle_name: members[0]?.middleName || "",
-      //     last_name: members[0]?.lastName || "",
-      //     residential_address: members[0]?.residentialAddress || "",
-      //     ownership_percentage: members[0]?.ownershipPercentage || "",
-      //     owner_info: formData.ownerInfo,
-      //     phone_number: formData.phoneNumber,
-      //     email: formData.email,
-      //     country: formData.country,
-      //     address_local: formData.addressLocal,
-      //     city: formData.city,
-      //     zip_code: formData.zipCode,
-      //     q1: formData.q1,
-      //     q2: formData.q2,
-      //     q3: formData.q3,
-      //     q4: formData.q4,
-      //     description: formData.description,
-      //     business_type: formData.businessType,
-      //     business_website: formData.businessWebsite,
-      //     business_email: formData.businessEmail,
-      //     status: "pending", // default status
-      //     fax_number: formData.faxNumber,
-      //   },
-      // ]);
-
-      /* --------------- Old Code --------------- */
-
-      if (error) {
-        console.error("Supabase insert error:", error);
-        alert("Failed to submit form.");
-      } else {
-        router.push("/");
-      }
+      router.push("/form-submission-success");
     } catch (err) {
       console.error("Error submitting form:", err);
       alert("Something went wrong.");
@@ -300,7 +217,7 @@ export function BusinessFormationForm() {
                     desiredCompanyName: e.target.value,
                   })
                 }
-                placeholder="Enter your desired company name"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -318,7 +235,7 @@ export function BusinessFormationForm() {
                     alternativeCompanyName: e.target.value,
                   })
                 }
-                placeholder="Enter your alternative company name"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -350,7 +267,7 @@ export function BusinessFormationForm() {
                       return next;
                     })
                   }
-                  placeholder="Enter member's first name"
+                  className="border-gray-300"
                   required
                 />
               </div>
@@ -370,7 +287,7 @@ export function BusinessFormationForm() {
                       return next;
                     })
                   }
-                  placeholder="Enter member's middle name"
+                  className="border-gray-300"
                   required
                 />
               </div>
@@ -390,7 +307,7 @@ export function BusinessFormationForm() {
                       return next;
                     })
                   }
-                  placeholder="Enter member's last name"
+                  className="border-gray-300"
                   required
                 />
               </div>
@@ -412,7 +329,7 @@ export function BusinessFormationForm() {
                       return next;
                     })
                   }
-                  placeholder="Enter member's residential address"
+                  className="border-gray-300"
                   required
                 />
               </div>
@@ -434,7 +351,7 @@ export function BusinessFormationForm() {
                       return next;
                     })
                   }
-                  placeholder="Enter member's ownership percentage"
+                  className="border-gray-300"
                   required
                 />
               </div>
@@ -482,7 +399,7 @@ export function BusinessFormationForm() {
                     phoneNumber: e.target.value,
                   })
                 }
-                placeholder="Enter your phone number"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -495,7 +412,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                placeholder="Enter your email"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -508,7 +425,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, faxNumber: e.target.value })
                 }
-                placeholder="Enter your fax number"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -521,7 +438,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, country: e.target.value })
                 }
-                placeholder="Enter your country"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -534,7 +451,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, addressLocal: e.target.value })
                 }
-                placeholder="Enter your local address"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -547,7 +464,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })
                 }
-                placeholder="Enter your city"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -561,7 +478,7 @@ export function BusinessFormationForm() {
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300">
                   <SelectValue placeholder="Select state" />
                 </SelectTrigger>
                 <SelectContent>
@@ -582,7 +499,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, zipCode: e.target.value })
                 }
-                placeholder="Enter your zip code"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -606,7 +523,7 @@ export function BusinessFormationForm() {
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
                 <SelectContent>
@@ -627,7 +544,7 @@ export function BusinessFormationForm() {
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
                 <SelectContent>
@@ -646,7 +563,7 @@ export function BusinessFormationForm() {
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
                 <SelectContent>
@@ -667,7 +584,7 @@ export function BusinessFormationForm() {
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
                 <SelectContent>
@@ -698,7 +615,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                placeholder="Enter brief description of business"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -712,7 +629,7 @@ export function BusinessFormationForm() {
                 }
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300">
                   <SelectValue placeholder="Select business type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -740,7 +657,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, businessWebsite: e.target.value })
                 }
-                placeholder="Enter business website"
+                className="border-gray-300"
                 required
               />
             </div>
@@ -753,7 +670,7 @@ export function BusinessFormationForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, businessEmail: e.target.value })
                 }
-                placeholder="Enter business email"
+                className="border-gray-300"
                 required
               />
             </div>
