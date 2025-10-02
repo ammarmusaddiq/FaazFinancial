@@ -27,7 +27,16 @@ export default function LLCFormationPage() {
               Start your Limited Liability Company with confidence. We handle
               the paperwork while you focus on building your business.
             </p>
-            <Link href="/start-business">
+
+            {/* <Link href={{ pathname: "/page2", query: { id: userId, name: userName } }}></Link> */}
+
+            {/* <Link href="/start-business?serviceType=llc"> */}
+            <Link
+              href={{
+                pathname: "/start-business",
+                query: { serviceType: "llc" },
+              }}
+            >
               <Button size="lg" className="text-lg px-8 py-6">
                 Start Your LLC Today
               </Button>

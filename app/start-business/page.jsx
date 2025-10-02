@@ -3,17 +3,22 @@
 import { BusinessFormationForm } from "@/components/submission-forms/business-formation-form";
 import { CorporationFormationForm } from "@/components/submission-forms/corporation-formation";
 import { EinServicesForm } from "@/components/submission-forms/ein-services-form";
+import { ItinApplicationForm } from "@/components/submission-forms/itin-application-form";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { useState } from "react";
 
 export default function StartBusinessPage() {
-  const [selectedService, setSelectedService] = useState("");
+  const params = new URLSearchParams(window.location.search);
+  const serviceType = params.get("serviceType");
+  console.log("serviceType :", serviceType);
+  const [selectedService, setSelectedService] = useState(serviceType || "");
 
   const serviceComponents = {
     llc: <BusinessFormationForm />,
     corp: <CorporationFormationForm />,
     ein: <EinServicesForm />,
+    itin: <ItinApplicationForm />,
   };
 
   return (
@@ -41,6 +46,7 @@ export default function StartBusinessPage() {
               <option value="llc">LLC Formation</option>
               <option value="corp">Corporation Formation</option>
               <option value="ein">EIN Services</option>
+              <option value="itin">ITIN Application</option>
             </select>
           </div>
 
@@ -48,7 +54,7 @@ export default function StartBusinessPage() {
             {selectedService ? (
               serviceComponents[selectedService]
             ) : (
-              <p>Please select a service</p>
+              <BusinessFormationForm />
             )}
           </div>
         </div>

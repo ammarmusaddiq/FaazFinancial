@@ -1,7 +1,7 @@
 "use client";
 
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
-import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
+import { DashboardOverview2 } from "@/components/dashboard/dashboard-overview2";
 import { supabase } from "../../lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -85,7 +85,7 @@ export default function DashboardPage() {
       {!mockUser && !mockProfile && <div>Loading...</div>}
       {mockUser && mockProfile && (
         <DashboardLayout user={mockUser} profileData={mockProfile}>
-          <DashboardOverview
+          <DashboardOverview2
             user={mockUser}
             profile={mockProfile}
             formations={mockFormations}
