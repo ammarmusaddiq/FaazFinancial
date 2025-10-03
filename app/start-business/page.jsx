@@ -7,10 +7,14 @@ import { ItinApplicationForm } from "@/components/submission-forms/itin-applicat
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function StartBusinessPage() {
-  const params = new URLSearchParams(window.location.search);
-  const serviceType = params.get("serviceType");
+  // const params = new URLSearchParams(window.location.search);
+  // const serviceType = params.get("serviceType");
+
+  const searchParams = useSearchParams();
+  const serviceType = searchParams.get("serviceType");
   console.log("serviceType :", serviceType);
   const [selectedService, setSelectedService] = useState(serviceType || "");
 
