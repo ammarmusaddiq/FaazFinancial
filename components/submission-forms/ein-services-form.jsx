@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -155,7 +157,7 @@ export function EinServicesForm() {
                   <Button
                     variant="outline"
                     className="justify-start text-left font-normal border-gray-300"
-                id="dateOfFormation"
+                    id="dateOfFormation"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formData.dateOfFormation
@@ -173,8 +175,8 @@ export function EinServicesForm() {
                     }
                     onSelect={(date) =>
                       date &&
-                  setFormData({
-                    ...formData,
+                      setFormData({
+                        ...formData,
                         dateOfFormation: date.toISOString().split("T")[0],
                       })
                     }
@@ -253,7 +255,7 @@ export function EinServicesForm() {
                   <Button
                     variant="outline"
                     className=" justify-start text-left font-normal border-gray-300"
-                id="fiscalYearEndDate"
+                    id="fiscalYearEndDate"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formData.fiscalYearEndDate
@@ -273,8 +275,8 @@ export function EinServicesForm() {
                     }
                     onSelect={(date) =>
                       date &&
-                  setFormData({
-                    ...formData,
+                      setFormData({
+                        ...formData,
                         fiscalYearEndDate: date.toISOString().split("T")[0],
                       })
                     }
@@ -320,7 +322,7 @@ export function EinServicesForm() {
                   <Button
                     variant="outline"
                     className="justify-start text-left font-normal border-gray-300"
-                id="registrationDate"
+                    id="registrationDate"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formData.registrationDate
@@ -338,8 +340,8 @@ export function EinServicesForm() {
                     }
                     onSelect={(date) =>
                       date &&
-                  setFormData({
-                    ...formData,
+                      setFormData({
+                        ...formData,
                         registrationDate: date.toISOString().split("T")[0],
                       })
                     }
