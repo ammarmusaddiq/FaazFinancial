@@ -33,14 +33,8 @@ export function DashboardLayout({ children, user, profileData }) {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    // const supabase = createClient();
-    // await supabase.auth.signOut();
-    // router.push("/");
-
     try {
       await supabase.auth.signOut();
-      // setSession(null);
-
       toast.success("Logged out successfully");
       router.push("/");
     } catch (error) {

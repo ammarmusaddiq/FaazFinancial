@@ -1,61 +1,68 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { createBrowserClient } from "@/lib/supabase/client"
-import { Users, Building2, DollarSign, TrendingUp, BarChart3 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-
-interface Stats {
-  totalUsers: number
-  totalBusinesses: number
-  monthlyRevenue: number
-  growthRate: number
-}
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { createBrowserClient } from "@/lib/supabase/client";
+import {
+  Users,
+  Building2,
+  DollarSign,
+  TrendingUp,
+  BarChart3,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function AdminOverview() {
-  const [stats, setStats] = useState<Stats>({
+  const [stats, setStats] = useState({
     totalUsers: 0,
     totalBusinesses: 0,
     monthlyRevenue: 0,
     growthRate: 0,
-  })
-  const [loading, setLoading] = useState(true)
-  const supabase = createBrowserClient()
+  });
+  const [loading, setLoading] = useState(true);
+  const supabase = createBrowserClient();
 
   useEffect(() => {
     async function fetchStats() {
       try {
         // Fetch total users
-        const { count: userCount } = await supabase.from("profiles").select("*", { count: "exact", head: true })
+        const { count: userCount } = await supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true });
 
         // Fetch total businesses
         const { count: businessCount } = await supabase
           .from("business_formations")
-          .select("*", { count: "exact", head: true })
+          .select("*", { count: "exact", head: true });
 
         // Calculate monthly revenue (mock data for demo)
-        const monthlyRevenue = (businessCount || 0) * 299 // Average service price
+        const monthlyRevenue = (businessCount || 0) * 299; // Average service price
 
         // Calculate growth rate (mock data for demo)
-        const growthRate = 12.5
+        const growthRate = 12.5;
 
         setStats({
           totalUsers: userCount || 0,
           totalBusinesses: businessCount || 0,
           monthlyRevenue,
           growthRate,
-        })
+        });
       } catch (error) {
-        console.error("Error fetching stats:", error)
+        console.error("Error fetching stats:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchStats()
-  }, [supabase])
+    fetchStats();
+  }, [supabase]);
 
   const statCards = [
     {
@@ -86,7 +93,7 @@ export function AdminOverview() {
       icon: TrendingUp,
       color: "text-purple-600",
     },
-  ]
+  ];
 
   if (loading) {
     return (
@@ -109,7 +116,7 @@ export function AdminOverview() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -121,27 +128,37 @@ export function AdminOverview() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => {
-          const Icon = stat.icon
+          const Icon = stat.icon;
           return (
             <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">{stat.title}</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-600">
+                  {stat.title}
+                </CardTitle>
                 <Icon className={cn("h-4 w-4", stat.color)} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {stat.value}
+                </div>
                 <CardDescription>{stat.description}</CardDescription>
               </CardContent>
             </Card>
-          )
+          );
         })}
+      </div>
+
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Admin Overview</h1>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest user registrations and business formations</CardDescription>
+            <CardDescription>
+              Latest user registrations and business formations
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -177,15 +194,24 @@ export function AdminOverview() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Button className="w-full justify-start bg-transparent" variant="outline">
+              <Button
+                className="w-full justify-start bg-transparent"
+                variant="outline"
+              >
                 <Users className="mr-2 h-4 w-4" />
                 Manage Users
               </Button>
-              <Button className="w-full justify-start bg-transparent" variant="outline">
+              <Button
+                className="w-full justify-start bg-transparent"
+                variant="outline"
+              >
                 <Building2 className="mr-2 h-4 w-4" />
                 Review Formations
               </Button>
-              <Button className="w-full justify-start bg-transparent" variant="outline">
+              <Button
+                className="w-full justify-start bg-transparent"
+                variant="outline"
+              >
                 <BarChart3 className="mr-2 h-4 w-4" />
                 View Analytics
               </Button>
@@ -194,5 +220,5 @@ export function AdminOverview() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
