@@ -42,7 +42,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLayout } from "@/components/admin/admin-layout";
-import { AdminOverview } from "@/components/admin/admin-overview";
+import { AdminOverview2 } from "@/components/admin/admin-overview2";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useAuthContext } from "@/context/AppContext";
 
@@ -67,7 +67,7 @@ export default function AdminPage() {
 
   return (
     <AdminLayout>
-      <AdminOverview />
+      <AdminOverview2 />
     </AdminLayout>
   );
 }

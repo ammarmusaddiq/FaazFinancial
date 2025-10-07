@@ -63,11 +63,8 @@ export function Header() {
         data: { session },
       } = await supabase.auth.getSession();
       setSession(session);
-      // console.log("session at login", session);
-      // console.log("user id of current user", session?.user?.id);
 
       const { data: user } = await supabase.auth.getUser();
-      // console.log("user from getUser", user);
 
       const { data: userRole } = await supabase
         .from("user_data") // your custom table
@@ -75,26 +72,15 @@ export function Header() {
         .eq("auth_user_id", user?.user?.id)
         .single();
 
-      // console.log("User Role:", userRole);
       setUserRole(userRole);
     };
 
     getSession();
 
-    // if (session?.user) {
-    //   await fetchUserRole(session.user.id);
-    // }
-
     // Listen for auth state changes like user login or logout
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
-
-        // if (session?.user) {
-        //   await fetchUserRole(session.user.id);
-        // } else {
-        //   setUserRole(null);
-        // }
       }
     );
 
@@ -102,22 +88,6 @@ export function Header() {
       listener.subscription.unsubscribe();
     };
   }, []);
-
-  // const fetchUserRole = async (userId) => {
-  //   const { data: userRole, error } = await supabase
-  //     .from("users") // your custom table
-  //     .select("role")
-  //     .eq("id", userId)
-  //     .single();
-
-  //   console.log("User Role:", userRole);
-
-  //   if (error) {
-  //     console.error("Error fetching role:", error);
-  //   } else {
-  //     setUserRole(userRole.role);
-  //   }
-  // };
 
   const handleLogout = async () => {
     try {
@@ -183,7 +153,7 @@ export function Header() {
                     <MenuItem href="/services/corporation-formation">
                       Corp. Formation
                     </MenuItem>
-                    <MenuItem href="/services/corporation-formation">
+                    <MenuItem href="/start-business?serviceType=corp">
                       Compare Formation Plans
                     </MenuItem>
                     <MenuItem href="/pricing">
@@ -198,13 +168,13 @@ export function Header() {
                     COMPLIANCE SERVICES
                   </h3>
                   <ul className="space-y-1">
-                    <MenuItem href="/services/registered-agent">
+                    <MenuItem href="/start-business?serviceType=ein">
                       EIN Services
                     </MenuItem>
                     <MenuItem href="/services/compliance">
                       BOI Filing Services
                     </MenuItem>
-                    <MenuItem href="/services/boi-filing">
+                    <MenuItem href="/start-business?serviceType=itin">
                       ITIN Services
                     </MenuItem>
                     <MenuItem href="/services/ein">
