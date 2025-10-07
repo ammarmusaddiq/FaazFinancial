@@ -1,63 +1,85 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { createBrowserClient } from "@/lib/supabase/client"
-import { Search, Mail, Calendar, MoreHorizontal } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { createBrowserClient } from "@/lib/supabase/client";
+import { Search, Mail, Calendar, MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface User {
-  id: string
-  email: string
-  full_name: string | null
-  role: string
-  created_at: string
-  last_sign_in_at: string | null
+  id: string;
+  email: string;
+  full_name: string | null;
+  role: string;
+  created_at: string;
+  last_sign_in_at: string | null;
 }
 
 export function UsersManagement() {
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const supabase = createBrowserClient()
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const supabase = createBrowserClient();
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const { data, error } = await supabase.from("profiles").select("*").order("created_at", { ascending: false })
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-        if (error) throw error
-        setUsers(data || [])
+        if (error) throw error;
+        setUsers(data || []);
       } catch (error) {
-        console.error("Error fetching users:", error)
+        console.error("Error fetching users:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchUsers()
-  }, [supabase])
+    fetchUsers();
+  }, [supabase]);
 
   const filteredUsers = users.filter(
     (user) =>
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (user.full_name && user.full_name.toLowerCase().includes(searchTerm.toLowerCase())),
-  )
+      (user.full_name &&
+        user.full_name.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
-      const { error } = await supabase.from("profiles").update({ role: newRole }).eq("id", userId)
+      const { error } = await supabase
+        .from("profiles")
+        .update({ role: newRole })
+        .eq("id", userId);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setUsers(users.map((user) => (user.id === userId ? { ...user, role: newRole } : user)))
+      setUsers(
+        users.map((user) =>
+          user.id === userId ? { ...user, role: newRole } : user
+        )
+      );
     } catch (error) {
-      console.error("Error updating user role:", error)
+      console.error("Error updating user role:", error);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -82,7 +104,7 @@ export function UsersManagement() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -112,15 +134,26 @@ export function UsersManagement() {
 
           <div className="space-y-4">
             {filteredUsers.map((user) => (
-              <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={user.id}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                     <Mail className="h-5 w-5 text-gray-500" />
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <p className="font-medium text-gray-900">{user.full_name || "No name"}</p>
-                      <Badge variant={user.role === "admin" ? "default" : "secondary"}>{user.role}</Badge>
+                      <p className="font-medium text-gray-900">
+                        {user.full_name || "No name"}
+                      </p>
+                      <Badge
+                        variant={
+                          user.role === "admin" ? "default" : "secondary"
+                        }
+                      >
+                        {user.role}
+                      </Badge>
                     </div>
                     <p className="text-sm text-gray-500">{user.email}</p>
                     <div className="flex items-center space-x-4 text-xs text-gray-400 mt-1">
@@ -129,7 +162,10 @@ export function UsersManagement() {
                         Joined {new Date(user.created_at).toLocaleDateString()}
                       </span>
                       {user.last_sign_in_at && (
-                        <span>Last active {new Date(user.last_sign_in_at).toLocaleDateString()}</span>
+                        <span>
+                          Last active{" "}
+                          {new Date(user.last_sign_in_at).toLocaleDateString()}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -141,10 +177,19 @@ export function UsersManagement() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => updateUserRole(user.id, user.role === "admin" ? "user" : "admin")}>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        updateUserRole(
+                          user.id,
+                          user.role === "admin" ? "user" : "admin"
+                        )
+                      }
+                    >
                       {user.role === "admin" ? "Remove Admin" : "Make Admin"}
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">Suspend User</DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-600">
+                      Suspend User
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -153,11 +198,13 @@ export function UsersManagement() {
 
           {filteredUsers.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-gray-500">No users found matching your search.</p>
+              <p className="text-gray-500">
+                No users found matching your search.
+              </p>
             </div>
           )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -21,6 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 
 export function DashboardOverview2({ user, profile }) {
   const [userForms, setUserForms] = useState([]);
@@ -43,7 +44,7 @@ export function DashboardOverview2({ user, profile }) {
         // Step 2: Fetch forms for that user
         const { data, error } = await supabase
           .from("form_submissions")
-          .select("service_name, status, created_at, form_data")
+          .select("service_name, status, created_at, form_data , id")
           .eq("user_id", cUser.id)
           .order("created_at", { ascending: false });
 
@@ -126,6 +127,20 @@ export function DashboardOverview2({ user, profile }) {
     );
   };
 
+  const handlePay = async (form) => {
+    console.log(form);
+    try {
+      const response = await axios.post("/api/get-payment-url", {
+        form_id: form.id,
+        amount: 25,
+      });
+      console.log(response);
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Welcome Section */}
@@ -169,6 +184,13 @@ export function DashboardOverview2({ user, profile }) {
                       View Details
                     </Button>
                   </DialogTrigger>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => handlePay(form)}
+                  >
+                    Pay
+                  </Button>
                   <DialogContent className="max-w-3xl w-full max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>{form.service_name}</DialogTitle>
